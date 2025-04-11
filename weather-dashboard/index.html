@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palghar Weather Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/custom.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .weather-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .weather-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .weather-video.loaded {
+            opacity: 1;
+        }
+        .video-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3 group">
+                    <div class="relative w-10 h-10 flex items-center justify-center bg-blue-500 rounded-full transform transition-transform group-hover:rotate-12">
+                        <i class="fas fa-cloud-sun text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-semibold text-gray-800">Palghar Weather</h1>
+                        <p class="text-sm text-gray-500" id="current-date"></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="details.html" class="text-gray-600 hover:text-blue-500 hidden sm:flex items-center">
+                        <i class="fas fa-chart-line mr-1"></i>
+                        <span>Detailed Forecast</span>
+                    </a>
+                    <a href="https://instagram.com/palghar_weather" target="_blank" 
+                       class="instagram-pulse flex items-center space-x-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600 transition-all">
+                        <i class="fab fa-instagram"></i>
+                        <span id="social-handle" class="text-sm">@palghar_weather</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Video Background -->
+    <div class="weather-video-container">
+        <video id="weather-video" class="weather-video" autoplay loop muted playsinline>
+            <!-- Video source will be set dynamically -->
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="relative pb-20">
+        <!-- Hero Section -->
+        <div class="py-12 text-white">
+            <div class="container mx-auto px-4">
+                <div class="glass-effect rounded-lg p-8">
+                    <h2 id="location" class="text-4xl font-bold mb-2">Palghar, Maharashtra, India</h2>
+                    <p class="text-xl mb-4">Real-time weather updates for your location</p>
+                    <div id="last-update" class="text-sm opacity-90"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loader" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative container mx-auto mt-4" role="alert"></div>
+
+        <!-- Weather Content -->
+        <div id="weather-content" class="container mx-auto px-4 py-8">
+            <!-- Current Weather Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Temperature Card -->
+                <div class="glass-effect rounded-lg p-6 text-white weather-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <i class="fas fa-temperature-high text-2xl text-orange-500 mb-2 weather-icon-sun"></i>
+                            <h3 class="text-lg font-semibold">Temperature</h3>
+                        </div>
+                        <span id="current-temp" class="text-3xl font-bold">--°C</span>
+                    </div>
+                </div>
+
+                <!-- Humidity Card -->
+                <div class="glass-effect rounded-lg p-6 text-white weather-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <i class="fas fa-water text-2xl text-blue-500 mb-2 weather-icon-cloud"></i>
+                            <h3 class="text-lg font-semibold">Humidity</h3>
+                        </div>
+                        <span id="humidity" class="text-3xl font-bold">--%</span>
+                    </div>
+                </div>
+
+                <!-- Wind Speed Card -->
+                <div class="glass-effect rounded-lg p-6 text-white weather-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <i class="fas fa-wind text-2xl text-teal-500 mb-2 weather-icon-wind"></i>
+                            <h3 class="text-lg font-semibold">Wind Speed</h3>
+                        </div>
+                        <span id="wind-speed" class="text-3xl font-bold">-- km/h</span>
+                    </div>
+                </div>
+
+                <!-- Precipitation Card -->
+                <div class="glass-effect rounded-lg p-6 text-white weather-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <i class="fas fa-cloud-rain text-2xl text-indigo-500 mb-2 weather-icon-rain"></i>
+                            <h3 class="text-lg font-semibold">Precipitation</h3>
+                        </div>
+                        <span id="precipitation" class="text-3xl font-bold">-- mm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Weather Status -->
+            <section class="mb-8">
+                <div class="glass-effect rounded-lg p-6 text-white">
+                    <h3 class="text-2xl font-bold mb-4">Current Weather Status</h3>
+                    <div id="weather-description" class="text-lg">
+                        <!-- Weather description will be dynamically updated -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather Tips -->
+            <section class="mb-8">
+                <div class="glass-effect rounded-lg p-6 text-white">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-lightbulb text-yellow-400 text-2xl mr-3"></i>
+                        <h3 class="text-2xl font-bold">Weather Tips & Safety</h3>
+                    </div>
+                    <div id="weather-tips" class="space-y-4">
+                        <!-- Tips will be dynamically updated -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Instagram Promotion -->
+            <section class="mt-12">
+                <div class="glass-effect rounded-lg p-8 text-white">
+                    <div class="flex flex-col md:flex-row items-center justify-between">
+                        <div class="mb-6 md:mb-0">
+                            <h4 class="text-2xl font-bold mb-2">Follow Us on Instagram</h4>
+                            <p class="opacity-80">Get daily weather updates, beautiful weather photos, and more!</p>
+                        </div>
+                        <a href="https://instagram.com/palghar_weather" target="_blank" 
+                           class="instagram-pulse flex items-center space-x-3 px-6 py-3 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600 transition-all">
+                            <i class="fab fa-instagram text-2xl"></i>
+                            <span class="font-semibold">Follow @palghar_weather</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white/90 backdrop-blur-md border-t mt-12 py-6 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-600 mb-4 md:mb-0 text-sm">
+                    © 2024 Palghar Weather Dashboard
+                </div>
+                <div class="flex space-x-4">
+                    <a href="https://instagram.com/palghar_weather" target="_blank" class="text-gray-600 hover:text-pink-500">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="details.html" class="text-gray-600 hover:text-blue-500">
+                        Detailed Forecast
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
