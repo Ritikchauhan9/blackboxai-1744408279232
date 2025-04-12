@@ -1,5 +1,3 @@
-export const API_KEY = 'YOUR_API_KEY'; // Replace with actual API key
-
 export const LOCATION = {
     name: 'Palghar, Maharashtra, India',
     coordinates: {
