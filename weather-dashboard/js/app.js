@@ -6,6 +6,10 @@ class WeatherDashboard {
         this.isLoading = false;
         this.lastUpdate = null;
         this.isDetailsPage = window.location.pathname.includes('details.html');
+        this.lastScrollTop = 0;
+        this.scrollTimeout = null;
+        this.scrollThreshold = 5;
+        this.scrollDelay = 100;
         this.weatherConditions = {
             sunny: {
                 morning: 'https://assets.mixkit.co/videos/preview/mixkit-bright-sun-in-the-blue-sky-time-lapse-4358-large.mp4',
@@ -68,33 +72,12 @@ class WeatherDashboard {
         await this.loadWeatherData();
         this.setupRefreshInterval();
         this.setupVideoEventListeners();
+        this.setupNavbarScroll();
     }
 
-    setupVideoEventListeners() {
-        const videoElement = document.getElementById('weather-video');
-        if (!videoElement) return;
-
-        videoElement.addEventListener('loadeddata', () => {
-            videoElement.classList.add('loaded');
-        });
-
-        videoElement.addEventListener('error', (e) => {
-            console.warn('Video loading error:', e);
-            this.updateBackgroundFallback();
-        });
-    }
-
-    updateBackgroundFallback() {
-        const container = document.querySelector('.weather-video-container');
-        if (!container) return;
-
-        const condition = this.determineWeatherCondition();
-        const timeOfDay = this.getTimeOfDay();
-        container.style.background = this.fallbackImages[condition][timeOfDay];
-    }
-
-    getWeatherDescription(data) {
-        if (!data || !data.data) return '';
+    updateWeatherDescription(data) {
+        const descriptionElement = document.getElementById('weather-description');
+        if (!descriptionElement || !data || !data.data) return;
 
         const { temperature, relativehumidity, windspeed, precipitation } = data.data;
         const condition = this.determineWeatherCondition(data);
@@ -138,16 +121,17 @@ class WeatherDashboard {
         }
 
         description += '</div>';
-        return description;
+        descriptionElement.innerHTML = description;
     }
 
-    getWeatherTips(data) {
-        if (!data || !data.data) return [];
+    updateWeatherTips(data) {
+        const tipsElement = document.getElementById('weather-tips');
+        if (!tipsElement || !data || !data.data) return;
 
-        const { temperature, relativehumidity, windspeed, precipitation } = data.data;
+        const tips = [];
+        const { temperature, relativehumidity, windspeed } = data.data;
         const condition = this.determineWeatherCondition(data);
         const timeOfDay = this.getTimeOfDay();
-        const tips = [];
 
         // High-priority tips based on severe conditions
         if (condition === 'thunder') {
@@ -216,33 +200,85 @@ class WeatherDashboard {
         };
         tips.push(generalTip);
 
-        return tips;
-    }
-
-    updateWeatherDescription(data) {
-        const descriptionElement = document.getElementById('weather-description');
-        if (!descriptionElement) return;
-
-        const description = this.getWeatherDescription(data);
-        descriptionElement.innerHTML = description;
-    }
-
-    updateWeatherTips(data) {
-        const tipsElement = document.getElementById('weather-tips');
-        if (!tipsElement) return;
-
-        const tips = this.getWeatherTips(data);
-        
         // Sort tips by priority
         const priorityOrder = { high: 0, medium: 1, low: 2 };
         tips.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
 
+        // Update the UI
         tipsElement.innerHTML = tips.map(tip => `
             <div class="flex items-start space-x-3 p-4 glass-effect rounded-lg ${tip.priority === 'high' ? 'border-l-4 border-red-500' : ''}">
                 <i class="fas ${tip.icon} ${tip.color} text-xl mt-1"></i>
                 <p class="flex-1 ${tip.priority === 'high' ? 'font-semibold' : ''}">${tip.tip}</p>
             </div>
         `).join('');
+    }
+
+    setupNavbarScroll() {
+        const navbar = document.querySelector('header');
+        if (!navbar) return;
+        
+        const navbarHeight = navbar.offsetHeight;
+        
+        // Add transition classes for smooth animations
+        navbar.classList.add('transition-transform', 'duration-300', 'ease-in-out');
+
+        // Initial state
+        navbar.style.transform = 'translateY(0)';
+
+        let lastScrollTop = 0;
+        let scrollTimeout = null;
+
+        window.addEventListener('scroll', () => {
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+
+            scrollTimeout = setTimeout(() => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollDelta = scrollTop - lastScrollTop;
+
+                // Only trigger if scroll distance exceeds threshold
+                if (Math.abs(scrollDelta) > this.scrollThreshold) {
+                    if (scrollTop > lastScrollTop && scrollTop > navbarHeight) {
+                        // Scrolling down & past navbar height - hide navbar
+                        navbar.style.transform = 'translateY(-100%)';
+                    } else {
+                        // Scrolling up or at top - show navbar
+                        navbar.style.transform = 'translateY(0)';
+                    }
+                    lastScrollTop = scrollTop;
+                }
+            }, this.scrollDelay);
+        }, { passive: true });
+
+        // Show navbar when mouse moves to top of screen
+        document.addEventListener('mousemove', (e) => {
+            if (e.clientY <= navbarHeight) {
+                navbar.style.transform = 'translateY(0)';
+            }
+        }, { passive: true });
+
+        // Show navbar when user reaches bottom of page
+        window.addEventListener('scroll', () => {
+            const isAtBottom = (window.innerHeight + window.pageYOffset) >= document.documentElement.scrollHeight - 10;
+            if (isAtBottom) {
+                navbar.style.transform = 'translateY(0)';
+            }
+        }, { passive: true });
+    }
+
+    setupVideoEventListeners() {
+        const videoElement = document.getElementById('weather-video');
+        if (!videoElement) return;
+
+        videoElement.addEventListener('loadeddata', () => {
+            videoElement.classList.add('loaded');
+        });
+
+        videoElement.addEventListener('error', (e) => {
+            console.warn('Video loading error:', e);
+            this.updateBackgroundFallback();
+        });
     }
 
     updateBackgroundVideo(weatherData) {
@@ -270,9 +306,19 @@ class WeatherDashboard {
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
                     console.warn('Auto-play failed:', error);
+                    this.updateBackgroundFallback();
                 });
             }
         }
+    }
+
+    updateBackgroundFallback() {
+        const container = document.querySelector('.weather-video-container');
+        if (!container) return;
+
+        const condition = this.determineWeatherCondition();
+        const timeOfDay = this.getTimeOfDay();
+        container.style.background = this.fallbackImages[condition][timeOfDay];
     }
 
     updateLocationInfo() {
@@ -378,59 +424,16 @@ class WeatherDashboard {
         this.updateHourlyForecast(data.data.hourly || []);
     }
 
-    updateHourlyForecast(hourlyData) {
-        const container = document.getElementById('hourly-forecast');
-        if (!container) return;
-
-        container.innerHTML = hourlyData.slice(0, 24).map((hour, index) => `
-            <div class="glass-effect rounded-lg p-4 weather-card text-white">
-                <div class="text-lg font-semibold mb-2">${this.formatHourTime(index)}</div>
-                <div class="flex items-center justify-between">
-                    <div class="space-y-2">
-                        <div class="flex items-center">
-                            <i class="fas fa-temperature-high text-orange-500 mr-2"></i>
-                            <span class="text-2xl font-bold">${this.formatNumber(hour.temperature, 1)}°C</span>
-                        </div>
-                        <div class="flex items-center text-sm opacity-80">
-                            <i class="fas fa-cloud-rain text-blue-300 mr-2"></i>
-                            <span>${this.formatNumber(hour.precipitation, 1)} mm</span>
-                        </div>
-                    </div>
-                    <div class="space-y-2 text-right">
-                        <div class="flex items-center justify-end">
-                            <i class="fas fa-wind text-teal-300 mr-2"></i>
-                            <span>${this.formatNumber(hour.windspeed, 1)} km/h</span>
-                        </div>
-                        <div class="flex items-center justify-end text-sm opacity-80">
-                            <i class="fas fa-water text-blue-300 mr-2"></i>
-                            <span>${this.formatNumber(hour.relativehumidity, 0)}%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    formatNumber(value, decimals = 0) {
-        if (value === undefined || value === null) return '--';
-        return Number(value).toFixed(decimals);
-    }
-
-    formatHourTime(hourOffset) {
-        const date = new Date();
-        date.setHours(date.getHours() + hourOffset);
-        return date.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: true 
-        });
-    }
-
     updateElement(elementId, value, unit = '') {
         const element = document.getElementById(elementId);
         if (element && value !== undefined) {
             element.textContent = `${this.formatNumber(value)}${unit}`;
         }
+    }
+
+    formatNumber(value, decimals = 0) {
+        if (value === undefined || value === null) return '--';
+        return Number(value).toFixed(decimals);
     }
 
     updateLastUpdateTime() {
@@ -470,6 +473,49 @@ class WeatherDashboard {
     setupRefreshInterval() {
         // Refresh weather data every 10 minutes
         setInterval(() => this.loadWeatherData(), 600000);
+    }
+
+    updateHourlyForecast(hourlyData) {
+        const container = document.getElementById('hourly-forecast');
+        if (!container) return;
+
+        container.innerHTML = hourlyData.map((hour, index) => `
+            <div class="glass-effect rounded-lg p-4 weather-card text-white mb-4">
+                <div class="text-lg font-semibold mb-2">${this.formatHourTime(index)}</div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <i class="fas fa-temperature-high text-orange-500 mr-2"></i>
+                            <span class="text-2xl font-bold">${this.formatNumber(hour.temperature, 1)}°C</span>
+                        </div>
+                        <div class="flex items-center text-sm opacity-80">
+                            <i class="fas fa-cloud-rain text-blue-300 mr-2"></i>
+                            <span>${this.formatNumber(hour.precipitation, 1)} mm</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-right">
+                        <div class="flex items-center justify-end">
+                            <i class="fas fa-wind text-teal-300 mr-2"></i>
+                            <span>${this.formatNumber(hour.windspeed, 1)} km/h</span>
+                        </div>
+                        <div class="flex items-center justify-end text-sm opacity-80">
+                            <i class="fas fa-water text-blue-300 mr-2"></i>
+                            <span>${this.formatNumber(hour.relativehumidity, 0)}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    formatHourTime(hourOffset) {
+        const date = new Date();
+        date.setHours(date.getHours() + hourOffset);
+        return date.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+        });
     }
 }
 
