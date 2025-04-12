@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,62 +16,6 @@
     
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/custom.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .weather-video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-        .weather-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .weather-video.loaded {
-            opacity: 1;
-        }
-        .video-overlay {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
-            z-index: -1;
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .timeline-scroll::-webkit-scrollbar {
-            height: 8px;
-        }
-        .timeline-scroll::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        .timeline-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-        }
-        .timeline-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-    </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
     <!-- Header -->
@@ -92,10 +36,14 @@
                         <i class="fas fa-home mr-1"></i>
                         <span>Home</span>
                     </a>
+                    <a href="helpline.html" class="text-gray-600 hover:text-red-500 hidden sm:flex items-center">
+                        <i class="fas fa-phone-volume mr-1"></i>
+                        <span>Emergency</span>
+                    </a>
                     <a href="https://instagram.com/palghar_weather" target="_blank" 
                        class="instagram-pulse flex items-center space-x-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600 transition-all">
                         <i class="fab fa-instagram"></i>
-                        <span id="social-handle" class="text-sm">@palghar_weather</span>
+                        <span id="social-handle">@palghar_weather</span>
                     </a>
                 </div>
             </div>
@@ -111,16 +59,12 @@
     </div>
 
     <!-- Main Content -->
-    <main class="relative pb-20">
+    <main class="container mx-auto px-4 py-8">
         <!-- Hero Section -->
-        <div class="py-12 text-white">
-            <div class="container mx-auto px-4">
-                <div class="glass-effect rounded-lg p-8">
-                    <h2 id="location" class="text-4xl font-bold mb-2">Detailed Forecast</h2>
-                    <p class="text-xl mb-4">Extended weather information for Palghar, Maharashtra</p>
-                    <div id="last-update" class="text-sm opacity-90"></div>
-                </div>
-            </div>
+        <div class="glass-effect rounded-lg p-8 text-white mb-8">
+            <h2 id="location" class="text-4xl font-bold mb-2">Detailed Forecast</h2>
+            <p class="text-xl mb-4">Extended weather information for Palghar, Maharashtra</p>
+            <div id="last-update" class="text-sm opacity-90"></div>
         </div>
 
         <!-- Loading Spinner -->
@@ -129,54 +73,35 @@
         </div>
 
         <!-- Error Message -->
-        <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative container mx-auto mt-4" role="alert"></div>
+        <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert"></div>
 
         <!-- Weather Content -->
-        <div id="weather-content" class="container mx-auto px-4 py-8">
-            <!-- Hourly Forecast -->
-            <section class="mb-12">
-                <div class="glass-effect rounded-lg p-6 mb-8">
-                    <h3 class="text-2xl font-semibold text-white mb-6">Hourly Forecast</h3>
-                    <div class="overflow-x-auto timeline-scroll">
-                        <div class="inline-block min-w-full">
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="hourly-forecast">
-                                <!-- Hourly forecast cards will be inserted here by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
+        <div id="weather-content">
+            <!-- Hourly Forecast Section -->
+            <section class="mb-8">
+                <h3 class="text-2xl font-bold text-white mb-6">Hourly Forecast</h3>
+                <div id="hourly-forecast" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Hourly forecast cards will be dynamically inserted here -->
                 </div>
             </section>
 
-            <!-- Additional Weather Information -->
-            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- UV Index -->
-                <div class="glass-effect rounded-lg p-6 text-white weather-card">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-sun text-yellow-500 text-2xl mr-3 weather-icon-sun"></i>
-                        <h4 class="text-lg font-semibold">UV Index</h4>
+            <!-- Emergency Helpline Card -->
+            <section class="mb-8">
+                <div class="glass-effect rounded-lg p-6 text-white">
+                    <div class="flex flex-col md:flex-row items-center justify-between">
+                        <div class="mb-4 md:mb-0">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-phone-volume text-red-500 text-2xl mr-3"></i>
+                                <h3 class="text-2xl font-bold">Emergency Helplines</h3>
+                            </div>
+                            <p class="opacity-80">Access important emergency contact numbers for Palghar</p>
+                        </div>
+                        <a href="helpline.html" 
+                           class="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all">
+                            <i class="fas fa-arrow-right"></i>
+                            <span class="font-semibold">View Emergency Contacts</span>
+                        </a>
                     </div>
-                    <div id="uv-index" class="text-3xl font-bold">--</div>
-                    <p class="mt-2 opacity-80">UV protection recommended</p>
-                </div>
-
-                <!-- Feels Like -->
-                <div class="glass-effect rounded-lg p-6 text-white weather-card">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-thermometer-half text-red-500 text-2xl mr-3 weather-icon-sun"></i>
-                        <h4 class="text-lg font-semibold">Feels Like</h4>
-                    </div>
-                    <div id="feels-like" class="text-3xl font-bold">--°C</div>
-                    <p class="mt-2 opacity-80">Perceived temperature</p>
-                </div>
-
-                <!-- Pressure -->
-                <div class="glass-effect rounded-lg p-6 text-white weather-card">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-compress-alt text-blue-500 text-2xl mr-3 weather-icon-cloud"></i>
-                        <h4 class="text-lg font-semibold">Pressure</h4>
-                    </div>
-                    <div id="pressure" class="text-3xl font-bold">-- hPa</div>
-                    <p class="mt-2 opacity-80">Atmospheric pressure</p>
                 </div>
             </section>
 
@@ -200,7 +125,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white/90 backdrop-blur-md border-t mt-12 py-6 relative z-10">
+    <footer class="bg-white/90 backdrop-blur-md border-t mt-12 py-6">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-gray-600 mb-4 md:mb-0 text-sm">
@@ -212,6 +137,9 @@
                     </a>
                     <a href="index.html" class="text-gray-600 hover:text-blue-500">
                         Back to Home
+                    </a>
+                    <a href="helpline.html" class="text-gray-600 hover:text-red-500">
+                        Emergency Contacts
                     </a>
                 </div>
             </div>
