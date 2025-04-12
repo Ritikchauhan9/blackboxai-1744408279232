@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palghar Weather Dashboard</title>
     
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 fill=%22%23ffcc00%22>☀️</text></svg>">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -16,42 +19,6 @@
     
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/custom.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .weather-video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-        .weather-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .weather-video.loaded {
-            opacity: 1;
-        }
-        .video-overlay {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5));
-            z-index: -1;
-        }
-    </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
     <!-- Header -->
@@ -72,10 +39,14 @@
                         <i class="fas fa-chart-line mr-1"></i>
                         <span>Detailed Forecast</span>
                     </a>
+                    <a href="helpline.html" class="text-gray-600 hover:text-red-500 hidden sm:flex items-center">
+                        <i class="fas fa-phone-volume mr-1"></i>
+                        <span>Emergency</span>
+                    </a>
                     <a href="https://instagram.com/palghar_weather" target="_blank" 
                        class="instagram-pulse flex items-center space-x-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600 transition-all">
                         <i class="fab fa-instagram"></i>
-                        <span id="social-handle" class="text-sm">@palghar_weather</span>
+                        <span id="social-handle">@palghar_weather</span>
                     </a>
                 </div>
             </div>
@@ -183,6 +154,26 @@
                 </div>
             </section>
 
+            <!-- Emergency Helpline Card -->
+            <section class="mb-8">
+                <div class="glass-effect rounded-lg p-6 text-white">
+                    <div class="flex flex-col md:flex-row items-center justify-between">
+                        <div class="mb-4 md:mb-0">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-phone-volume text-red-500 text-2xl mr-3"></i>
+                                <h3 class="text-2xl font-bold">Emergency Helplines</h3>
+                            </div>
+                            <p class="opacity-80">Access important emergency contact numbers for Palghar</p>
+                        </div>
+                        <a href="helpline.html" 
+                           class="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all">
+                            <i class="fas fa-arrow-right"></i>
+                            <span class="font-semibold">View Emergency Contacts</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
             <!-- Instagram Promotion -->
             <section class="mt-12">
                 <div class="glass-effect rounded-lg p-8 text-white">
@@ -203,7 +194,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white/90 backdrop-blur-md border-t mt-12 py-6 relative z-10">
+    <footer class="bg-white/90 backdrop-blur-md border-t mt-12 py-6">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-gray-600 mb-4 md:mb-0 text-sm">
@@ -213,8 +204,8 @@
                     <a href="https://instagram.com/palghar_weather" target="_blank" class="text-gray-600 hover:text-pink-500">
                         <i class="fab fa-instagram text-xl"></i>
                     </a>
-                    <a href="details.html" class="text-gray-600 hover:text-blue-500">
-                        Detailed Forecast
+                    <a href="index.html" class="text-gray-600 hover:text-blue-500">
+                        Back to Home
                     </a>
                 </div>
             </div>
