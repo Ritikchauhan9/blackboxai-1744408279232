@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Helplines - Palghar Weather</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/custom.css">
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <div class="relative w-10 h-10 flex items-center justify-center bg-blue-500 rounded-full transform transition-transform group-hover:rotate-12">
+                        <i class="fas fa-cloud-sun text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-semibold text-gray-800">Palghar Weather</h1>
+                        <p class="text-sm text-gray-500" id="current-date"></p>
+                    </div>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-500 hidden sm:flex items-center">
+                        <i class="fas fa-home mr-1"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="https://instagram.com/palghar_weather" target="_blank" 
+                       class="instagram-pulse flex items-center space-x-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600 transition-all">
+                        <i class="fab fa-instagram"></i>
+                        <span id="social-handle">@palghar_weather</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="mb-12">
+            <div class="glass-effect rounded-lg p-8 text-white">
+                <h2 class="text-4xl font-bold mb-4">Emergency Helplines</h2>
+                <p class="text-xl opacity-90">Important contact numbers for emergency services in Palghar</p>
+            </div>
+        </div>
+
+        <!-- Emergency Numbers Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Citizen's Call Center -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-phone-volume text-green-400 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">Citizen's Call Center</h3>
+                </div>
+                <a href="tel:155300" class="text-3xl font-bold text-green-400 hover:text-green-300">155300</a>
+            </div>
+
+            <!-- Child Helpline -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-child text-yellow-400 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">Child Helpline</h3>
+                </div>
+                <a href="tel:1098" class="text-3xl font-bold text-yellow-400 hover:text-yellow-300">1098</a>
+            </div>
+
+            <!-- Women Helpline -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-venus text-pink-400 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">Women Helpline</h3>
+                </div>
+                <a href="tel:1091" class="text-3xl font-bold text-pink-400 hover:text-pink-300">1091</a>
+            </div>
+
+            <!-- Crime Stopper -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-shield-alt text-red-400 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">Crime Stopper</h3>
+                </div>
+                <a href="tel:1090" class="text-3xl font-bold text-red-400 hover:text-red-300">1090</a>
+            </div>
+
+            <!-- Rescue & Relief -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-hands-helping text-blue-400 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">Rescue & Relief</h3>
+                </div>
+                <a href="tel:1077" class="text-3xl font-bold text-blue-400 hover:text-blue-300">1077</a>
+            </div>
+
+            <!-- Ambulance -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-ambulance text-red-500 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">Ambulance</h3>
+                </div>
+                <div class="space-x-4">
+                    <a href="tel:102" class="text-3xl font-bold text-red-500 hover:text-red-400">102</a>
+                    <span class="text-2xl">/</span>
+                    <a href="tel:108" class="text-3xl font-bold text-red-500 hover:text-red-400">108</a>
+                </div>
+            </div>
+
+            <!-- NIC Helpdesk -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-laptop text-purple-400 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">NIC Helpdesk</h3>
+                </div>
+                <a href="tel:18001111555" class="text-3xl font-bold text-purple-400 hover:text-purple-300">1800 111 555</a>
+            </div>
+
+            <!-- PDS Helpline -->
+            <div class="glass-effect rounded-lg p-6 text-white hover:transform hover:scale-105 transition-transform">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-store text-orange-400 text-2xl mr-3"></i>
+                    <h3 class="text-lg font-semibold">PDS Helpline</h3>
+                </div>
+                <div class="space-y-2">
+                    <a href="tel:18002224950" class="text-3xl font-bold text-orange-400 hover:text-orange-300">1800-22-4950</a>
+                    <div class="flex items-center">
+                        <span class="text-2xl mr-2">&</span>
+                        <a href="tel:1967" class="text-3xl font-bold text-orange-400 hover:text-orange-300">1967</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Tips -->
+        <div class="mt-12">
+            <div class="glass-effect rounded-lg p-8 text-white">
+                <div class="flex items-center mb-6">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 text-2xl mr-3"></i>
+                    <h3 class="text-2xl font-bold">Emergency Tips</h3>
+                </div>
+                <ul class="space-y-4 list-disc list-inside opacity-90">
+                    <li>Save these emergency numbers on your phone for quick access</li>
+                    <li>Stay calm while reporting an emergency</li>
+                    <li>Provide clear and accurate location information</li>
+                    <li>Follow instructions given by emergency personnel</li>
+                    <li>Keep your family informed about these emergency contacts</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white/90 backdrop-blur-md border-t mt-12 py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-600 mb-4 md:mb-0 text-sm">
+                    © 2024 Palghar Weather Dashboard
+                </div>
+                <div class="flex space-x-4">
+                    <a href="https://instagram.com/palghar_weather" target="_blank" class="text-gray-600 hover:text-pink-500">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a href="index.html" class="text-gray-600 hover:text-blue-500">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
